@@ -1,0 +1,3 @@
+PATH=/Users/administrator/opt/android-sdk-macosx/tools/:/Users/administrator/opt/android-sdk-macosx/platform-tools/:/Applications/NetBeans/NetBeans 7.2.1.app/Contents/Resources/NetBeans/java/ant/bin/:${PATH} export PATH
+JAVA_HOME=/usr export JAVA_HOME
+
