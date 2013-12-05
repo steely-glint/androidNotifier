@@ -1,20 +1,15 @@
 package uk.co.westhawk.pulley;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
@@ -82,7 +77,7 @@ public class PulleySetup extends Activity {
         //  GCM registration.
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(context);
+            regid = "";//getRegistrationId(context);
 
             if (regid.isEmpty()) {
                 registerInBackground();
@@ -179,6 +174,20 @@ public class PulleySetup extends Activity {
      }
      */
 
+    private String myTwitterId() {
+        AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+        String ret = android.os.Build.MODEL;
+        ;
+        Account[] list = manager.getAccountsByType("com.twitter.android.auth.login");
+        for (int i=0; i< list.length;i++){
+            Log.d(TAG," name "+list[i].name+" type "+list[i].type);
+            if ("com.twitter.android.auth.login".equalsIgnoreCase(list[i].type)){
+                ret = list[i].name;
+            }
+        }
+        return ret;
+    }
+
     /**
      * Registers the application with GCM servers asynchronously. <p> Stores the
      * registration ID and app versionCode in the application's shared
@@ -195,12 +204,12 @@ public class PulleySetup extends Activity {
                     }
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
-
+                    String twitterid = myTwitterId();
                     // You should send the registration ID to your server over HTTP,
                     // so it can use GCM/HTTP or CCS to send messages to your app.
                     // The request to your server should be authenticated if your app
                     // is using accounts.
-                    sendRegistrationIdToBackend();
+                    sendRegistrationIdToBackend(twitterid);
 
                     // For this demo: we don't need to send it because the device
                     // will send upstream messages to a server that echo back the
@@ -226,8 +235,10 @@ public class PulleySetup extends Activity {
      * since the device sends upstream messages to a server that echoes back the
      * message using the 'from' address in the message.
      */
-    private void sendRegistrationIdToBackend() {
+    private void sendRegistrationIdToBackend(String twitterid) {
         Log.d(TAG, "messaging id is" + regid);
+        Log.d(TAG, "twitter id is" + twitterid);
+
     }
 
     /**
